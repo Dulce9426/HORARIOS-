@@ -23,8 +23,9 @@ Página web que muestra los horarios en tiempo real de GMT, México y Nueva York
 - `vercel.json` - Configuración para Vercel
 - `.gitignore` - Archivos ignorados por Git
 - `generate-icons.html` - Generador de iconos (método fácil)
-- `generate-icons.js` - Script Node.js para generar iconos
-- `package.json` - Dependencias de Node.js
+- `generate-icons.js` - Script Node.js para generar iconos (solo local)
+- `package.json` - Configuración del proyecto (sin dependencias para producción)
+- `package-local.json` - Para desarrollo local con canvas (copia a package.json si necesitas generar iconos)
 
 ## 🚀 Desplegar en Vercel - Paso a Paso
 
