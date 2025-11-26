@@ -1,0 +1,13 @@
+{
+  "name": "reloj-mundial",
+  "version": "1.0.0",
+  "description": "Reloj mundial PWA con horarios en tiempo real",
+  "scripts": {
+    "generate-icons": "node generate-icons.js"
+  },
+  "dependencies": {
+    "canvas": "^2.11.2"
+  },
+  "devDependencies": {}
+}
+

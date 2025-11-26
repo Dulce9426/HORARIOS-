@@ -14,3 +14,7 @@ desktop.ini
 *.log
 *.tmp
 
+# Node modules
+node_modules/
+package-lock.json
+

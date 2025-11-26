@@ -9,14 +9,22 @@ Página web que muestra los horarios en tiempo real de GMT, México y Nueva York
 - ✅ Diseño estilo Ukiyo-e (arte japonés tradicional)
 - ✅ Diseño responsive y moderno
 - ✅ Fecha completa en español
+- ✅ **PWA (Progressive Web App)** - Instalable en dispositivos móviles
+- ✅ Funciona offline gracias al Service Worker
+- ✅ Instalable como app nativa
 
 ## 📁 Archivos del proyecto
 
 - `index.html` - Página principal
 - `styles.css` - Estilos y diseño
 - `script.js` - Lógica de los relojes en vivo
+- `manifest.json` - Configuración de la PWA
+- `service-worker.js` - Service Worker para funcionalidad offline
 - `vercel.json` - Configuración para Vercel
 - `.gitignore` - Archivos ignorados por Git
+- `generate-icons.html` - Generador de iconos (método fácil)
+- `generate-icons.js` - Script Node.js para generar iconos
+- `package.json` - Dependencias de Node.js
 
 ## 🚀 Desplegar en Vercel - Paso a Paso
 
@@ -155,3 +163,78 @@ start index.html
 ## 🎨 Estilo
 
 Este proyecto usa un diseño inspirado en **Ukiyo-e**, el arte de grabado en madera japonés tradicional, con colores suaves y elementos decorativos elegantes.
+
+---
+
+## 📱 PWA (Progressive Web App)
+
+Esta aplicación es una PWA completa, lo que significa que:
+
+- ✅ **Se puede instalar** en dispositivos móviles y escritorio
+- ✅ **Funciona offline** gracias al Service Worker
+- ✅ **Se comporta como una app nativa** cuando está instalada
+- ✅ **Carga rápida** con caché inteligente
+
+### 🖼️ Generar Iconos para la PWA
+
+La PWA necesita iconos en diferentes tamaños. Tienes dos opciones:
+
+#### Opción 1: Generador HTML (Más Fácil)
+
+1. Abre `generate-icons.html` en tu navegador
+2. Haz clic en "Generar Iconos"
+3. Haz clic en "Descargar Todos"
+4. Los iconos se descargarán automáticamente
+5. Mueve los archivos `icon-*.png` a la carpeta del proyecto
+
+#### Opción 2: Script Node.js
+
+```bash
+# Instala las dependencias (solo la primera vez)
+npm install
+
+# Genera los iconos
+npm run generate-icons
+```
+
+Los iconos se crearán automáticamente en la carpeta del proyecto.
+
+### 📲 Instalar la PWA
+
+#### En Android (Chrome):
+1. Abre la página en Chrome
+2. Toca el menú (3 puntos) → "Agregar a la pantalla de inicio"
+3. La app se instalará y aparecerá como una app nativa
+
+#### En iOS (Safari):
+1. Abre la página en Safari
+2. Toca el botón de compartir (cuadrado con flecha)
+3. Selecciona "Agregar a pantalla de inicio"
+4. La app se instalará en tu pantalla de inicio
+
+#### En Desktop (Chrome/Edge):
+1. Abre la página en Chrome o Edge
+2. Busca el icono de instalación en la barra de direcciones (o menú)
+3. Haz clic en "Instalar"
+4. La app se abrirá en una ventana propia
+
+### 🔧 Verificar que la PWA funciona
+
+1. Abre las herramientas de desarrollador (F12)
+2. Ve a la pestaña "Application" (Chrome) o "Manifest" (Firefox)
+3. Verifica que:
+   - El manifest se carga correctamente
+   - El Service Worker está registrado y activo
+   - Los iconos están disponibles
+
+### 🐛 Solución de Problemas
+
+**Si los iconos no aparecen:**
+- Asegúrate de que los archivos `icon-*.png` estén en la raíz del proyecto
+- Verifica que las rutas en `manifest.json` sean correctas
+- Limpia la caché del navegador (Ctrl+Shift+Delete)
+
+**Si el Service Worker no funciona:**
+- Asegúrate de que estés usando HTTPS (o localhost para desarrollo)
+- Verifica que `service-worker.js` esté en la raíz del proyecto
+- Revisa la consola del navegador para errores
