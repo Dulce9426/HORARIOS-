@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+
 * {
     margin: 0;
     padding: 0;
@@ -5,26 +7,94 @@
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    font-family: 'Orbitron', 'Courier New', monospace;
+    background: #0a0a0a;
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 20px;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* Efecto de grid cyberpunk en el fondo */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        linear-gradient(rgba(0, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 50px 50px;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Efectos de partículas neón */
+body::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        radial-gradient(circle at 20% 50%, rgba(0, 255, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(255, 0, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 40% 20%, rgba(0, 255, 0, 0.1) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+    animation: pulse 4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 0.8; }
 }
 
 .container {
     width: 100%;
     max-width: 1200px;
+    position: relative;
+    z-index: 1;
 }
 
 h1 {
     text-align: center;
-    color: white;
-    font-size: 3rem;
-    margin-bottom: 40px;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    color: #00ffff;
+    font-size: 3.5rem;
+    margin-bottom: 50px;
+    text-shadow: 
+        0 0 10px #00ffff,
+        0 0 20px #00ffff,
+        0 0 30px #00ffff,
+        0 0 40px #00ffff;
+    font-weight: 900;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    animation: glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+    from {
+        text-shadow: 
+            0 0 10px #00ffff,
+            0 0 20px #00ffff,
+            0 0 30px #00ffff,
+            0 0 40px #00ffff;
+    }
+    to {
+        text-shadow: 
+            0 0 20px #00ffff,
+            0 0 30px #00ffff,
+            0 0 40px #00ffff,
+            0 0 50px #00ffff,
+            0 0 60px #00ffff;
+    }
 }
 
 .clocks-grid {
@@ -35,36 +105,100 @@ h1 {
 }
 
 .clock-card {
-    background: rgba(255, 255, 255, 0.95);
-    border-radius: 20px;
+    background: rgba(10, 10, 20, 0.8);
+    border: 2px solid;
+    border-image: linear-gradient(45deg, #00ffff, #ff00ff, #00ff00) 1;
+    border-radius: 0;
     padding: 30px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    backdrop-filter: blur(10px);
+    box-shadow: 
+        0 0 20px rgba(0, 255, 255, 0.3),
+        inset 0 0 20px rgba(0, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    position: relative;
+    backdrop-filter: blur(5px);
+    overflow: hidden;
+}
+
+.clock-card::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, #00ffff, #ff00ff, #00ff00, #00ffff);
+    background-size: 400% 400%;
+    z-index: -1;
+    border-radius: 0;
+    opacity: 0;
+    animation: borderGlow 3s ease infinite;
+    transition: opacity 0.3s ease;
+}
+
+.clock-card:hover::before {
+    opacity: 1;
+}
+
+@keyframes borderGlow {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
 }
 
 .clock-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 
+        0 0 30px rgba(0, 255, 255, 0.6),
+        0 0 60px rgba(255, 0, 255, 0.4),
+        inset 0 0 30px rgba(0, 255, 255, 0.2);
+    border-image: linear-gradient(45deg, #00ffff, #ff00ff, #00ff00, #ffff00) 1;
 }
 
 .clock-header {
     text-align: center;
     margin-bottom: 25px;
-    border-bottom: 2px solid #667eea;
+    border-bottom: 2px solid;
+    border-image: linear-gradient(90deg, transparent, #00ffff, transparent) 1;
     padding-bottom: 15px;
+    position: relative;
+}
+
+.clock-header::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50%;
+    height: 2px;
+    background: #00ffff;
+    box-shadow: 0 0 10px #00ffff;
+    animation: scanLine 2s ease-in-out infinite;
+}
+
+@keyframes scanLine {
+    0%, 100% { width: 50%; opacity: 1; }
+    50% { width: 100%; opacity: 0.5; }
 }
 
 .clock-header h2 {
-    color: #333;
+    color: #00ffff;
     font-size: 2rem;
     margin-bottom: 5px;
+    text-shadow: 
+        0 0 10px #00ffff,
+        0 0 20px #00ffff;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
 }
 
 .timezone {
-    color: #666;
-    font-size: 0.9rem;
-    font-weight: 500;
+    color: #00ff00;
+    font-size: 0.85rem;
+    font-weight: 400;
+    text-shadow: 0 0 5px #00ff00;
+    letter-spacing: 1px;
+    font-family: 'Courier New', monospace;
 }
 
 .clock-display {
@@ -73,22 +207,96 @@ h1 {
 
 .time {
     font-size: 3.5rem;
-    font-weight: bold;
-    color: #667eea;
+    font-weight: 900;
+    color: #00ffff;
     margin-bottom: 15px;
-    font-family: 'Courier New', monospace;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    font-family: 'Orbitron', 'Courier New', monospace;
+    text-shadow: 
+        0 0 10px #00ffff,
+        0 0 20px #00ffff,
+        0 0 30px #00ffff;
+    letter-spacing: 3px;
+    animation: timeGlow 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes timeGlow {
+    from {
+        text-shadow: 
+            0 0 10px #00ffff,
+            0 0 20px #00ffff,
+            0 0 30px #00ffff;
+    }
+    to {
+        text-shadow: 
+            0 0 15px #00ffff,
+            0 0 25px #00ffff,
+            0 0 35px #00ffff,
+            0 0 45px #00ffff;
+    }
 }
 
 .date {
-    font-size: 1.2rem;
-    color: #555;
+    font-size: 1.1rem;
+    color: #ff00ff;
     font-weight: 500;
+    text-shadow: 0 0 10px #ff00ff;
+    letter-spacing: 1px;
+    font-family: 'Courier New', monospace;
+}
+
+/* Colores específicos para cada reloj */
+.clock-card:nth-child(1) .time {
+    color: #00ffff;
+    text-shadow: 
+        0 0 10px #00ffff,
+        0 0 20px #00ffff,
+        0 0 30px #00ffff;
+}
+
+.clock-card:nth-child(2) .time {
+    color: #00ff00;
+    text-shadow: 
+        0 0 10px #00ff00,
+        0 0 20px #00ff00,
+        0 0 30px #00ff00;
+}
+
+.clock-card:nth-child(3) .time {
+    color: #ff00ff;
+    text-shadow: 
+        0 0 10px #ff00ff,
+        0 0 20px #ff00ff,
+        0 0 30px #ff00ff;
+}
+
+.clock-card:nth-child(2) .clock-header h2 {
+    color: #00ff00;
+    text-shadow: 
+        0 0 10px #00ff00,
+        0 0 20px #00ff00;
+}
+
+.clock-card:nth-child(3) .clock-header h2 {
+    color: #ff00ff;
+    text-shadow: 
+        0 0 10px #ff00ff,
+        0 0 20px #ff00ff;
+}
+
+.clock-card:nth-child(2) .clock-header::after {
+    background: #00ff00;
+    box-shadow: 0 0 10px #00ff00;
+}
+
+.clock-card:nth-child(3) .clock-header::after {
+    background: #ff00ff;
+    box-shadow: 0 0 10px #ff00ff;
 }
 
 @media (max-width: 768px) {
     h1 {
         font-size: 2rem;
+        letter-spacing: 2px;
     }
 
     .clocks-grid {
@@ -98,5 +306,8 @@ h1 {
     .time {
         font-size: 2.5rem;
     }
-}
 
+    .clock-header h2 {
+        font-size: 1.5rem;
+    }
+}
