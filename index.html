@@ -80,7 +80,7 @@
             <div class="clock-card converter-card">
                 <div class="clock-header">
                     <h2>Conversor de Tiempo</h2>
-                    <span class="timezone">Convierte entre zonas horarias</span>
+                    <span class="timezone">Convierte entre México, Nueva York y GMT</span>
                 </div>
                 
                 <div class="converter-content">
@@ -93,11 +93,9 @@
                         <div class="converter-input-group">
                             <label for="from-zone">Zona Origen</label>
                             <select id="from-zone" class="converter-select">
-                                <option value="UTC">UTC</option>
-                                <option value="America/Mexico_City">México</option>
+                                <option value="America/Mexico_City" selected>México</option>
                                 <option value="America/New_York">Nueva York</option>
-                                <option value="Europe/London">Londres</option>
-                                <option value="Asia/Tokyo">Tokio</option>
+                                <option value="Europe/London">GMT (Londres)</option>
                             </select>
                         </div>
                         
@@ -106,19 +104,49 @@
                         <div class="converter-input-group">
                             <label for="to-zone">Zona Destino</label>
                             <select id="to-zone" class="converter-select">
-                                <option value="UTC">UTC</option>
                                 <option value="America/Mexico_City">México</option>
-                                <option value="America/New_York">Nueva York</option>
-                                <option value="Europe/London">Londres</option>
-                                <option value="Asia/Tokyo">Tokio</option>
+                                <option value="America/New_York" selected>Nueva York</option>
+                                <option value="Europe/London">GMT (Londres)</option>
                             </select>
                         </div>
+                    </div>
+                    
+                    <!-- Botones rápidos -->
+                    <div class="quick-buttons">
+                        <button class="quick-btn" data-from="America/Mexico_City" data-to="America/New_York">MX → NY</button>
+                        <button class="quick-btn" data-from="America/Mexico_City" data-to="Europe/London">MX → GMT</button>
+                        <button class="quick-btn" data-from="America/New_York" data-to="America/Mexico_City">NY → MX</button>
+                        <button class="quick-btn" data-from="America/New_York" data-to="Europe/London">NY → GMT</button>
+                        <button class="quick-btn" data-from="Europe/London" data-to="America/Mexico_City">GMT → MX</button>
+                        <button class="quick-btn" data-from="Europe/London" data-to="America/New_York">GMT → NY</button>
                     </div>
                     
                     <div class="converter-result">
                         <div class="result-label">Resultado</div>
                         <div class="result-time" id="converter-result">--:--:--</div>
                         <div class="result-date" id="converter-date-result">-- -- ----</div>
+                    </div>
+                    
+                    <!-- Vista de todas las zonas -->
+                    <div class="all-zones-view">
+                        <div class="result-label">Todas las Zonas</div>
+                        <div class="zones-grid">
+                            <div class="zone-result">
+                                <div class="zone-name">México</div>
+                                <div class="zone-time" id="all-mexico-time">--:--:--</div>
+                                <div class="zone-date" id="all-mexico-date">-- -- ----</div>
+                            </div>
+                            <div class="zone-result">
+                                <div class="zone-name">Nueva York</div>
+                                <div class="zone-time" id="all-ny-time">--:--:--</div>
+                                <div class="zone-date" id="all-ny-date">-- -- ----</div>
+                            </div>
+                            <div class="zone-result">
+                                <div class="zone-name">GMT</div>
+                                <div class="zone-time" id="all-gmt-time">--:--:--</div>
+                                <div class="zone-date" id="all-gmt-date">-- -- ----</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -190,9 +190,23 @@ document.addEventListener('DOMContentLoaded', () => {
     toggleLabel.textContent = use24HourFormat ? '24H' : '12H';
     
     // Event listeners para el conversor
-    document.getElementById('converter-date').addEventListener('change', convertTimeZone);
+    document.getElementById('converter-date').addEventListener('change', () => {
+        convertTimeZone();
+        updateAllZones();
+    });
     document.getElementById('from-zone').addEventListener('change', convertTimeZone);
     document.getElementById('to-zone').addEventListener('change', convertTimeZone);
+    
+    // Botones rápidos
+    document.querySelectorAll('.quick-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const fromZone = btn.getAttribute('data-from');
+            const toZone = btn.getAttribute('data-to');
+            document.getElementById('from-zone').value = fromZone;
+            document.getElementById('to-zone').value = toZone;
+            convertTimeZone();
+        });
+    });
     
     // Inicializar conversor con hora actual
     const now = new Date();
@@ -207,11 +221,117 @@ document.addEventListener('DOMContentLoaded', () => {
     updateClocks();
     convertTimeZone();
     
+    // Función para actualizar todas las zonas
+    function updateAllZones() {
+        const dateInput = document.getElementById('converter-date').value;
+        const fromZone = document.getElementById('from-zone').value;
+        
+        let targetDate;
+        
+        if (dateInput) {
+            // Si hay una fecha ingresada, interpretarla como si fuera en la zona de origen
+            const localDate = new Date(dateInput);
+            // Crear una fecha que represente ese momento en la zona de origen
+            const dateString = localDate.toISOString().slice(0, 16);
+            targetDate = new Date(dateString);
+        } else {
+            // Si no hay fecha, usar la hora actual
+            targetDate = new Date();
+        }
+        
+        const zones = [
+            { id: 'all-mexico', zone: 'America/Mexico_City', name: 'México' },
+            { id: 'all-ny', zone: 'America/New_York', name: 'Nueva York' },
+            { id: 'all-gmt', zone: 'Europe/London', name: 'GMT' }
+        ];
+        
+        zones.forEach(({ id, zone }) => {
+            const formatter = new Intl.DateTimeFormat('en-US', {
+                timeZone: zone,
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: !use24HourFormat,
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric',
+                weekday: 'long'
+            });
+            
+            // Si hay una fecha ingresada, necesitamos convertirla correctamente
+            let dateToFormat = targetDate;
+            if (dateInput) {
+                // Convertir la fecha de la zona de origen a la zona destino
+                const fromFormatter = new Intl.DateTimeFormat('en-US', {
+                    timeZone: fromZone,
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: false
+                });
+                
+                const fromParts = fromFormatter.formatToParts(targetDate);
+                const fromTime = {
+                    year: fromParts.find(p => p.type === 'year').value,
+                    month: fromParts.find(p => p.type === 'month').value,
+                    day: fromParts.find(p => p.type === 'day').value,
+                    hour: fromParts.find(p => p.type === 'hour').value,
+                    minute: fromParts.find(p => p.type === 'minute').value,
+                    second: fromParts.find(p => p.type === 'second').value
+                };
+                
+                // Crear fecha UTC equivalente
+                const utcDate = new Date(Date.UTC(
+                    parseInt(fromTime.year),
+                    parseInt(fromTime.month) - 1,
+                    parseInt(fromTime.day),
+                    parseInt(fromTime.hour),
+                    parseInt(fromTime.minute),
+                    parseInt(fromTime.second)
+                ));
+                
+                // Ajustar por la diferencia de zona horaria
+                const fromOffset = new Date().toLocaleString('en-US', { timeZone: fromZone, timeZoneName: 'longOffset' });
+                const toOffset = new Date().toLocaleString('en-US', { timeZone: zone, timeZoneName: 'longOffset' });
+                
+                dateToFormat = utcDate;
+            }
+            
+            const parts = formatter.formatToParts(dateToFormat);
+            const timeObj = {};
+            parts.forEach(part => {
+                timeObj[part.type] = part.value;
+            });
+            
+            let timeString;
+            if (use24HourFormat) {
+                timeString = `${timeObj.hour}:${timeObj.minute}:${timeObj.second}`;
+            } else {
+                const ampm = timeObj.dayPeriod || '';
+                timeString = `${timeObj.hour}:${timeObj.minute}:${timeObj.second} ${ampm}`.trim();
+            }
+            
+            const dateString = `${timeObj.weekday} ${timeObj.day} de ${timeObj.month}, ${timeObj.year}`;
+            
+            document.getElementById(`${id}-time`).textContent = timeString;
+            document.getElementById(`${id}-date`).textContent = translateToSpanish(dateString);
+        });
+    }
+    
+    // Actualizar todas las zonas al cargar
+    updateAllZones();
+    
     // Actualizar cada segundo para que sea en vivo
     setInterval(() => {
         updateClocks();
         if (!document.getElementById('converter-date').value) {
             convertTimeZone();
+            updateAllZones();
+        } else {
+            updateAllZones();
         }
     }, 1000);
 });
