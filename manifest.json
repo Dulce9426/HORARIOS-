@@ -1,61 +1,47 @@
 {
-  "name": "Reloj Mundial - Horarios en Vivo",
-  "short_name": "Reloj Mundial",
-  "description": "Reloj mundial con horarios en tiempo real de GMT, México y Nueva York",
-  "start_url": "/",
+  "name": "Horarios - Conversor de Zonas",
+  "short_name": "Horarios",
+  "description": "Reloj mundial interactivo con conversor de zonas horarias entre México, Nueva York y GMT",
+  "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
-  "background_color": "#f5f1e8",
+  "background_color": "#fdfbf7",
   "theme_color": "#8b4513",
-  "orientation": "portrait-primary",
+  "orientation": "any",
+  "categories": ["utilities", "productivity"],
+  "lang": "es",
   "icons": [
-    {
-      "src": "icon-72x72.png",
-      "sizes": "72x72",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "icon-96x96.png",
-      "sizes": "96x96",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "icon-128x128.png",
-      "sizes": "128x128",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "icon-144x144.png",
-      "sizes": "144x144",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "icon-152x152.png",
-      "sizes": "152x152",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
     {
       "src": "icon-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "icon-384x384.png",
-      "sizes": "384x384",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
       "src": "icon-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "icon-maskable-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icon-maskable-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Ver hora en vivo",
+      "url": "./index.html",
+      "description": "Ver los relojes en tiempo real"
     }
   ]
 }
-

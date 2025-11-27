@@ -143,11 +143,29 @@ document.addEventListener('DOMContentLoaded', () => {
     setInterval(updateLiveClocks, 1000);
 });
 
-// Service Worker para PWA
+// ========== PWA - SERVICE WORKER ==========
 if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/service-worker.js')
-            .then(reg => console.log('SW registrado'))
-            .catch(err => console.log('SW error:', err));
+    window.addEventListener('load', async () => {
+        try {
+            const registration = await navigator.serviceWorker.register('./service-worker.js');
+            console.log('✅ PWA: Service Worker registrado', registration.scope);
+            
+            // Verificar actualizaciones
+            registration.addEventListener('updatefound', () => {
+                const newWorker = registration.installing;
+                newWorker.addEventListener('statechange', () => {
+                    if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                        console.log('🔄 PWA: Nueva versión disponible');
+                    }
+                });
+            });
+        } catch (error) {
+            console.log('❌ PWA: Error registrando SW:', error);
+        }
     });
 }
+
+// Detectar si está instalada como PWA
+window.addEventListener('appinstalled', () => {
+    console.log('📱 PWA: App instalada correctamente');
+});
