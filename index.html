@@ -9,7 +9,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Reloj Mundial">
     
-    <title>Horarios Mundiales - Reloj Mundial Ukiyo-e</title>
+    <title>Reloj Mundial - Horarios en Tiempo Real</title>
     
     <!-- Manifest -->
     <link rel="manifest" href="manifest.json">
@@ -25,7 +25,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>Horarios Mundiales</h1>
+        <h1>Reloj Mundial</h1>
         
         <!-- Toggle Switch para formato 12H/24H -->
         <div class="format-toggle-container">
@@ -75,7 +75,7 @@
         <div class="converter-section">
             <div class="clock-card converter-card">
                 <div class="clock-header">
-                    <h2>Conversor Universal</h2>
+                    <h2>Conversor de Tiempo</h2>
                     <span class="timezone">Convierte entre zonas horarias</span>
                 </div>
                 
@@ -87,28 +87,26 @@
                     
                     <div class="converter-row">
                         <div class="converter-input-group">
-                            <label for="from-zone">Desde la Zona</label>
+                            <label for="from-zone">Zona Origen</label>
                             <select id="from-zone" class="converter-select">
                                 <option value="UTC">UTC</option>
                                 <option value="America/Mexico_City">México</option>
                                 <option value="America/New_York">Nueva York</option>
                                 <option value="Europe/London">Londres</option>
-                                <option value="Asia/Tokyo">Tokyo</option>
-                                <option value="Europe/Madrid">Madrid</option>
+                                <option value="Asia/Tokyo">Tokio</option>
                             </select>
                         </div>
                         
                         <div class="converter-arrow">→</div>
                         
                         <div class="converter-input-group">
-                            <label for="to-zone">A la Zona</label>
+                            <label for="to-zone">Zona Destino</label>
                             <select id="to-zone" class="converter-select">
                                 <option value="UTC">UTC</option>
                                 <option value="America/Mexico_City">México</option>
                                 <option value="America/New_York">Nueva York</option>
                                 <option value="Europe/London">Londres</option>
-                                <option value="Asia/Tokyo">Tokyo</option>
-                                <option value="Europe/Madrid">Madrid</option>
+                                <option value="Asia/Tokyo">Tokio</option>
                             </select>
                         </div>
                     </div>
