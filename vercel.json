@@ -3,20 +3,6 @@
   "buildCommand": null,
   "outputDirectory": ".",
   "framework": null,
-  "routes": [
-    {
-      "src": "/service-worker.js",
-      "dest": "/service-worker.js",
-      "headers": {
-        "Cache-Control": "public, max-age=0, must-revalidate",
-        "Service-Worker-Allowed": "/"
-      }
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/$1"
-    }
-  ],
   "headers": [
     {
       "source": "/service-worker.js",
@@ -33,4 +19,3 @@
     }
   ]
 }
-
