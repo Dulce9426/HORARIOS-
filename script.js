@@ -1,322 +1,153 @@
-// Variable global para formato de hora
-let use24HourFormat = true;
+// Estado global
+let use24Hour = true;
+let converterBaseTime = new Date();
 
 // Traducir días y meses al español
-function translateToSpanish(dateString) {
-    const translations = {
-        'Monday': 'Lunes',
-        'Tuesday': 'Martes',
-        'Wednesday': 'Miércoles',
-        'Thursday': 'Jueves',
-        'Friday': 'Viernes',
-        'Saturday': 'Sábado',
-        'Sunday': 'Domingo',
-        'January': 'Enero',
-        'February': 'Febrero',
-        'March': 'Marzo',
-        'April': 'Abril',
-        'May': 'Mayo',
-        'June': 'Junio',
-        'July': 'Julio',
-        'August': 'Agosto',
-        'September': 'Septiembre',
-        'October': 'Octubre',
-        'November': 'Noviembre',
-        'December': 'Diciembre'
-    };
-    
-    let translated = dateString;
-    Object.keys(translations).forEach(eng => {
-        translated = translated.replace(eng, translations[eng]);
-    });
-    
-    return translated;
+const dias = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+const meses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+
+// Obtener tiempo en una zona horaria específica
+function getTimeInZone(date, timezone) {
+    return new Date(date.toLocaleString('en-US', { timeZone: timezone }));
 }
 
-function getTimeInTimeZone(timeZone, use24Hour = true) {
+// Formatear hora
+function formatTime(date) {
+    let hours = date.getHours();
+    const minutes = date.getMinutes();
+    const seconds = date.getSeconds();
+    
+    if (!use24Hour) {
+        const ampm = hours >= 12 ? ' PM' : ' AM';
+        hours = hours % 12 || 12;
+        return String(hours).padStart(2, '0') + ':' + 
+               String(minutes).padStart(2, '0') + ':' + 
+               String(seconds).padStart(2, '0') + ampm;
+    }
+    
+    return String(hours).padStart(2, '0') + ':' + 
+           String(minutes).padStart(2, '0') + ':' + 
+           String(seconds).padStart(2, '0');
+}
+
+// Formatear fecha corta
+function formatDateShort(date) {
+    const dia = dias[date.getDay()];
+    const num = date.getDate();
+    const mes = meses[date.getMonth()];
+    return `${dia}, ${num} ${mes}`;
+}
+
+// ========== RELOJES EN VIVO ==========
+function updateLiveClocks() {
     const now = new Date();
-    const formatter = new Intl.DateTimeFormat('en-US', {
-        timeZone: timeZone,
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: !use24Hour,
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric',
-        weekday: 'long'
+    
+    document.querySelectorAll('.live-clock').forEach(clock => {
+        const timezone = clock.dataset.timezone;
+        const timeInZone = getTimeInZone(now, timezone);
+        clock.querySelector('.live-time').textContent = formatTime(timeInZone);
     });
-    
-    const parts = formatter.formatToParts(now);
-    const timeObj = {};
-    parts.forEach(part => {
-        timeObj[part.type] = part.value;
-    });
-    
-    const dateString = `${timeObj.weekday} ${timeObj.day} de ${timeObj.month}, ${timeObj.year}`;
-    
-    // Formatear hora según el formato seleccionado
-    let timeString;
-    if (use24Hour) {
-        timeString = `${timeObj.hour}:${timeObj.minute}:${timeObj.second}`;
-    } else {
-        const ampm = timeObj.dayPeriod || '';
-        timeString = `${timeObj.hour}:${timeObj.minute}:${timeObj.second} ${ampm}`.trim();
-    }
-    
-    return {
-        time: timeString,
-        date: translateToSpanish(dateString)
-    };
 }
 
-function updateClocks() {
-    // GMT
-    const gmt = getTimeInTimeZone('Europe/London', use24HourFormat);
-    document.getElementById('gmt-time').textContent = gmt.time;
-    document.getElementById('gmt-date').textContent = gmt.date;
-
-    // México
-    const mexico = getTimeInTimeZone('America/Mexico_City', use24HourFormat);
-    document.getElementById('mexico-time').textContent = mexico.time;
-    document.getElementById('mexico-date').textContent = mexico.date;
-
-    // Nueva York
-    const ny = getTimeInTimeZone('America/New_York', use24HourFormat);
-    document.getElementById('ny-time').textContent = ny.time;
-    document.getElementById('ny-date').textContent = ny.date;
+// ========== CONVERSOR ==========
+function updateConverterClock(card, date) {
+    const timezone = card.dataset.timezone;
+    const timeInZone = getTimeInZone(date, timezone);
+    
+    const hours = timeInZone.getHours();
+    const minutes = timeInZone.getMinutes();
+    
+    card.querySelector('.hours').textContent = String(hours).padStart(2, '0');
+    card.querySelector('.minutes').textContent = String(minutes).padStart(2, '0');
+    card.querySelector('.date-display').textContent = formatDateShort(timeInZone);
+    
+    // Actualizar sliders
+    card.querySelector('.hour-slider').value = hours;
+    card.querySelector('.minute-slider').value = minutes;
 }
 
-// Función para convertir entre zonas horarias
-function convertTimeZone() {
-    const dateInput = document.getElementById('converter-date').value;
-    const fromZone = document.getElementById('from-zone').value;
-    const toZone = document.getElementById('to-zone').value;
-    
-    if (!dateInput) {
-        // Si no hay fecha, usar la hora actual
-        const now = new Date();
-        const fromTime = new Date(now.toLocaleString('en-US', { timeZone: fromZone }));
-        const toTime = new Date(now.toLocaleString('en-US', { timeZone: toZone }));
-        
-        const formatter = new Intl.DateTimeFormat('en-US', {
-            timeZone: toZone,
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-            hour12: !use24HourFormat,
-            day: 'numeric',
-            month: 'long',
-            year: 'numeric',
-            weekday: 'long'
-        });
-        
-        const parts = formatter.formatToParts(toTime);
-        const timeObj = {};
-        parts.forEach(part => {
-            timeObj[part.type] = part.value;
-        });
-        
-        let timeString;
-        if (use24HourFormat) {
-            timeString = `${timeObj.hour}:${timeObj.minute}:${timeObj.second}`;
-        } else {
-            const ampm = timeObj.dayPeriod || '';
-            timeString = `${timeObj.hour}:${timeObj.minute}:${timeObj.second} ${ampm}`.trim();
-        }
-        
-        const dateString = `${timeObj.weekday} ${timeObj.day} de ${timeObj.month}, ${timeObj.year}`;
-        
-        document.getElementById('converter-result').textContent = timeString;
-        document.getElementById('converter-date-result').textContent = translateToSpanish(dateString);
-        return;
-    }
-    
-    // Convertir la fecha ingresada
-    const localDate = new Date(dateInput);
-    
-    // Crear fecha en la zona de origen
-    const fromDate = new Date(localDate.toLocaleString('en-US', { timeZone: fromZone }));
-    
-    // Convertir a la zona destino
-    const toDate = new Date(fromDate.toLocaleString('en-US', { timeZone: toZone }));
-    
-    const formatter = new Intl.DateTimeFormat('en-US', {
-        timeZone: toZone,
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: !use24HourFormat,
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric',
-        weekday: 'long'
+function updateAllConverterClocks() {
+    document.querySelectorAll('.clock-card').forEach(card => {
+        updateConverterClock(card, converterBaseTime);
     });
-    
-    const parts = formatter.formatToParts(toDate);
-    const timeObj = {};
-    parts.forEach(part => {
-        timeObj[part.type] = part.value;
-    });
-    
-    let timeString;
-    if (use24HourFormat) {
-        timeString = `${timeObj.hour}:${timeObj.minute}:${timeObj.second}`;
-    } else {
-        const ampm = timeObj.dayPeriod || '';
-        timeString = `${timeObj.hour}:${timeObj.minute}:${timeObj.second} ${ampm}`.trim();
-    }
-    
-    const dateString = `${timeObj.weekday} ${timeObj.day} de ${timeObj.month}, ${timeObj.year}`;
-    
-    document.getElementById('converter-result').textContent = timeString;
-    document.getElementById('converter-date-result').textContent = translateToSpanish(dateString);
 }
 
-// Event listeners
+function syncConverterClocks(changedCard) {
+    const timezone = changedCard.dataset.timezone;
+    const hours = parseInt(changedCard.querySelector('.hour-slider').value);
+    const minutes = parseInt(changedCard.querySelector('.minute-slider').value);
+    
+    // Obtener el tiempo actual en esa zona
+    const currentInZone = getTimeInZone(converterBaseTime, timezone);
+    
+    // Crear nueva fecha con las horas/minutos cambiados
+    const newTime = new Date(currentInZone);
+    newTime.setHours(hours);
+    newTime.setMinutes(minutes);
+    
+    // Calcular la diferencia y aplicarla al tiempo base
+    const diff = newTime - currentInZone;
+    converterBaseTime = new Date(converterBaseTime.getTime() + diff);
+    
+    // Actualizar todos los relojes del conversor
+    document.querySelectorAll('.clock-card').forEach(card => {
+        updateConverterClock(card, converterBaseTime);
+    });
+}
+
+function resetConverterToNow() {
+    converterBaseTime = new Date();
+    updateAllConverterClocks();
+    
+    // Quitar clase active de todas las tarjetas
+    document.querySelectorAll('.clock-card').forEach(card => {
+        card.classList.remove('active');
+    });
+}
+
+// ========== INICIALIZACIÓN ==========
 document.addEventListener('DOMContentLoaded', () => {
-    // Toggle para formato 12H/24H
-    const formatToggle = document.getElementById('format-toggle');
-    const toggleLabel = document.querySelector('.toggle-label');
-    
-    formatToggle.addEventListener('change', (e) => {
-        use24HourFormat = e.target.checked;
-        toggleLabel.textContent = use24HourFormat ? '24H' : '12H';
-        updateClocks();
-        convertTimeZone(); // Actualizar también el conversor
+    // Botón formato 12H/24H
+    const btnFormat = document.getElementById('btn-format-live');
+    btnFormat.addEventListener('click', () => {
+        use24Hour = !use24Hour;
+        btnFormat.textContent = use24Hour ? '24H' : '12H';
+        updateLiveClocks();
     });
     
-    // Inicializar label del toggle
-    toggleLabel.textContent = use24HourFormat ? '24H' : '12H';
+    // Botón reset conversor
+    document.getElementById('btn-reset').addEventListener('click', resetConverterToNow);
     
-    // Event listeners para el conversor
-    document.getElementById('converter-date').addEventListener('change', () => {
-        convertTimeZone();
-        updateAllZones();
-    });
-    document.getElementById('from-zone').addEventListener('change', convertTimeZone);
-    document.getElementById('to-zone').addEventListener('change', convertTimeZone);
-    
-    // Botones rápidos
-    document.querySelectorAll('.quick-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const fromZone = btn.getAttribute('data-from');
-            const toZone = btn.getAttribute('data-to');
-            document.getElementById('from-zone').value = fromZone;
-            document.getElementById('to-zone').value = toZone;
-            convertTimeZone();
-        });
+    // Eventos para los sliders del conversor
+    document.querySelectorAll('.clock-card').forEach(card => {
+        const hourSlider = card.querySelector('.hour-slider');
+        const minuteSlider = card.querySelector('.minute-slider');
+        
+        const handleSliderChange = () => {
+            // Activar esta tarjeta
+            document.querySelectorAll('.clock-card').forEach(c => c.classList.remove('active'));
+            card.classList.add('active');
+            
+            syncConverterClocks(card);
+        };
+        
+        hourSlider.addEventListener('input', handleSliderChange);
+        minuteSlider.addEventListener('input', handleSliderChange);
     });
     
-    // Inicializar conversor con hora actual
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-    document.getElementById('converter-date').value = `${year}-${month}-${day}T${hours}:${minutes}`;
+    // Inicializar relojes
+    updateLiveClocks();
+    resetConverterToNow();
     
-    // Actualizar inmediatamente al cargar la página
-    updateClocks();
-    convertTimeZone();
-    
-    // Función para actualizar todas las zonas
-    function updateAllZones() {
-        const dateInput = document.getElementById('converter-date').value;
-        const fromZone = document.getElementById('from-zone').value;
-        
-        let baseDate;
-        
-        if (dateInput) {
-            // Si hay fecha ingresada, interpretarla como si fuera en la zona de origen
-            const inputDate = new Date(dateInput);
-            // Obtener los componentes de la fecha en la zona de origen
-            const fromFormatter = new Intl.DateTimeFormat('en-US', {
-                timeZone: fromZone,
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
-                hour12: false
-            });
-            
-            // Crear una fecha que represente ese momento específico
-            const localTime = inputDate.getTime();
-            const fromTime = new Date(localTime);
-            
-            baseDate = fromTime;
-        } else {
-            // Si no hay fecha, usar la hora actual
-            baseDate = new Date();
-        }
-        
-        const zones = [
-            { id: 'all-mexico', zone: 'America/Mexico_City' },
-            { id: 'all-ny', zone: 'America/New_York' },
-            { id: 'all-gmt', zone: 'Europe/London' }
-        ];
-        
-        zones.forEach(({ id, zone }) => {
-            const formatter = new Intl.DateTimeFormat('en-US', {
-                timeZone: zone,
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
-                hour12: !use24HourFormat,
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric',
-                weekday: 'long'
-            });
-            
-            const parts = formatter.formatToParts(baseDate);
-            const timeObj = {};
-            parts.forEach(part => {
-                timeObj[part.type] = part.value;
-            });
-            
-            let timeString;
-            if (use24HourFormat) {
-                timeString = `${timeObj.hour}:${timeObj.minute}:${timeObj.second}`;
-            } else {
-                const ampm = timeObj.dayPeriod || '';
-                timeString = `${timeObj.hour}:${timeObj.minute}:${timeObj.second} ${ampm}`.trim();
-            }
-            
-            const dateString = `${timeObj.weekday} ${timeObj.day} de ${timeObj.month}, ${timeObj.year}`;
-            
-            document.getElementById(`${id}-time`).textContent = timeString;
-            document.getElementById(`${id}-date`).textContent = translateToSpanish(dateString);
-        });
-    }
-    
-    // Actualizar todas las zonas al cargar
-    updateAllZones();
-    
-    // Actualizar cada segundo para que sea en vivo
-    setInterval(() => {
-        updateClocks();
-        if (!document.getElementById('converter-date').value) {
-            convertTimeZone();
-            updateAllZones();
-        } else {
-            updateAllZones();
-        }
-    }, 1000);
+    // Actualizar relojes en vivo cada segundo
+    setInterval(updateLiveClocks, 1000);
 });
 
-// Registrar Service Worker para PWA
+// Service Worker para PWA
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/service-worker.js')
-      .then((registration) => {
-        console.log('Service Worker registrado exitosamente:', registration.scope);
-      })
-      .catch((error) => {
-        console.log('Error al registrar Service Worker:', error);
-      });
-  });
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js')
+            .then(reg => console.log('SW registrado'))
+            .catch(err => console.log('SW error:', err));
+    });
 }

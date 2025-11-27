@@ -3,155 +3,170 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-    <meta name="description" content="Reloj mundial con horarios en tiempo real de GMT, México y Nueva York">
-    <meta name="theme-color" content="#8b4513">
+    <meta name="description" content="Reloj mundial interactivo - Horarios en vivo y conversor">
+    <meta name="theme-color" content="#1a1a2e">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Reloj Mundial">
+    <meta name="apple-mobile-web-app-title" content="Horarios">
     
-    <title>Reloj Mundial - Horarios en Tiempo Real</title>
-    <!-- Actualización: 2024 -->
+    <title>Horarios - Reloj Mundial</title>
     
-    <!-- Manifest -->
     <link rel="manifest" href="manifest.json">
-    
-    <!-- Iconos para iOS -->
     <link rel="apple-touch-icon" href="icon-192x192.png">
-    
-    <!-- Favicon -->
     <link rel="icon" type="image/png" sizes="192x192" href="icon-192x192.png">
-    <link rel="icon" type="image/png" sizes="512x512" href="icon-512x512.png">
     
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
-        <h1>Reloj Mundial</h1>
-        
-        <!-- Toggle Switch para formato 12H/24H -->
-        <div class="format-toggle-container">
-            <label class="format-toggle">
-                <input type="checkbox" id="format-toggle" checked>
-                <span class="toggle-slider"></span>
-                <span class="toggle-label">24H</span>
-            </label>
-        </div>
-        
-        <div class="clocks-grid">
-            <div class="clock-card">
-                <div class="clock-header">
-                    <h2>GMT</h2>
-                    <span class="timezone">Greenwich Mean Time</span>
+        <!-- SECCIÓN 1: RELOJES EN VIVO -->
+        <section class="section-live">
+            <header class="section-header">
+                <div class="header-title">
+                    <span class="live-indicator"></span>
+                    <h1>En Vivo</h1>
                 </div>
-                <div class="clock-display">
-                    <div class="time" id="gmt-time">--:--:--</div>
-                    <div class="date" id="gmt-date">-- -- ----</div>
+                <button class="btn-format" id="btn-format-live">24H</button>
+            </header>
+
+            <div class="live-clocks">
+                <div class="live-clock" data-timezone="America/Mexico_City">
+                    <span class="flag">🇲🇽</span>
+                    <div class="live-info">
+                        <span class="city">México</span>
+                        <span class="live-time">--:--:--</span>
+                    </div>
+                </div>
+
+                <div class="live-clock" data-timezone="America/New_York">
+                    <span class="flag">🇺🇸</span>
+                    <div class="live-info">
+                        <span class="city">Nueva York</span>
+                        <span class="live-time">--:--:--</span>
+                    </div>
+                </div>
+
+                <div class="live-clock" data-timezone="Europe/London">
+                    <span class="flag">🇬🇧</span>
+                    <div class="live-info">
+                        <span class="city">GMT</span>
+                        <span class="live-time">--:--:--</span>
+                    </div>
                 </div>
             </div>
+        </section>
 
-            <div class="clock-card">
-                <div class="clock-header">
-                    <h2>México</h2>
-                    <span class="timezone">America/Mexico_City</span>
+        <!-- SECCIÓN 2: CONVERSOR CON DESLIZADORES -->
+        <section class="section-converter">
+            <header class="section-header">
+                <div class="header-title">
+                    <span class="converter-icon">⚙️</span>
+                    <h2>Conversor</h2>
                 </div>
-                <div class="clock-display">
-                    <div class="time" id="mexico-time">--:--:--</div>
-                    <div class="date" id="mexico-date">-- -- ----</div>
-                </div>
-            </div>
+                <p class="section-subtitle">Desliza cualquier reloj para convertir</p>
+            </header>
 
-            <div class="clock-card">
-                <div class="clock-header">
-                    <h2>Nueva York</h2>
-                    <span class="timezone">America/New_York</span>
-                </div>
-                <div class="clock-display">
-                    <div class="time" id="ny-time">--:--:--</div>
-                    <div class="date" id="ny-date">-- -- ----</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Sección Conversor Universal -->
-        <div class="converter-section">
-            <div class="clock-card converter-card">
-                <div class="clock-header">
-                    <h2>Conversor de Tiempo</h2>
-                    <span class="timezone">Convierte entre México, Nueva York y GMT</span>
-                </div>
-                
-                <div class="converter-content">
-                    <div class="converter-input-group">
-                        <label for="converter-date">Fecha y Hora</label>
-                        <input type="datetime-local" id="converter-date" class="converter-input">
+            <div class="converter-clocks">
+                <!-- Reloj México -->
+                <div class="clock-card" data-timezone="America/Mexico_City">
+                    <div class="clock-header">
+                        <span class="clock-flag">🇲🇽</span>
+                        <div class="clock-info">
+                            <h3>México</h3>
+                            <span class="timezone-label">UTC-6</span>
+                        </div>
                     </div>
                     
-                    <div class="converter-row">
-                        <div class="converter-input-group">
-                            <label for="from-zone">Zona Origen</label>
-                            <select id="from-zone" class="converter-select">
-                                <option value="America/Mexico_City" selected>México</option>
-                                <option value="America/New_York">Nueva York</option>
-                                <option value="Europe/London">GMT (Londres)</option>
-                            </select>
+                    <div class="clock-display">
+                        <div class="slider-group">
+                            <label>Hora</label>
+                            <input type="range" class="time-slider hour-slider" min="0" max="23" value="12">
                         </div>
                         
-                        <div class="converter-arrow">→</div>
+                        <div class="time-display">
+                            <span class="hours">00</span>
+                            <span class="separator">:</span>
+                            <span class="minutes">00</span>
+                        </div>
                         
-                        <div class="converter-input-group">
-                            <label for="to-zone">Zona Destino</label>
-                            <select id="to-zone" class="converter-select">
-                                <option value="America/Mexico_City">México</option>
-                                <option value="America/New_York" selected>Nueva York</option>
-                                <option value="Europe/London">GMT (Londres)</option>
-                            </select>
+                        <div class="slider-group">
+                            <label>Minutos</label>
+                            <input type="range" class="time-slider minute-slider" min="0" max="59" value="0">
+                        </div>
+                        
+                        <div class="date-display">--</div>
+                    </div>
+                </div>
+
+                <!-- Reloj Nueva York -->
+                <div class="clock-card" data-timezone="America/New_York">
+                    <div class="clock-header">
+                        <span class="clock-flag">🇺🇸</span>
+                        <div class="clock-info">
+                            <h3>Nueva York</h3>
+                            <span class="timezone-label">UTC-5</span>
                         </div>
                     </div>
                     
-                    <!-- Botones rápidos -->
-                    <div class="quick-buttons">
-                        <button class="quick-btn" data-from="America/Mexico_City" data-to="America/New_York">MX → NY</button>
-                        <button class="quick-btn" data-from="America/Mexico_City" data-to="Europe/London">MX → GMT</button>
-                        <button class="quick-btn" data-from="America/New_York" data-to="America/Mexico_City">NY → MX</button>
-                        <button class="quick-btn" data-from="America/New_York" data-to="Europe/London">NY → GMT</button>
-                        <button class="quick-btn" data-from="Europe/London" data-to="America/Mexico_City">GMT → MX</button>
-                        <button class="quick-btn" data-from="Europe/London" data-to="America/New_York">GMT → NY</button>
-                    </div>
-                    
-                    <div class="converter-result">
-                        <div class="result-label">Resultado</div>
-                        <div class="result-time" id="converter-result">--:--:--</div>
-                        <div class="result-date" id="converter-date-result">-- -- ----</div>
-                    </div>
-                    
-                    <!-- Vista de todas las zonas -->
-                    <div class="all-zones-view">
-                        <div class="result-label">Todas las Zonas</div>
-                        <div class="zones-grid">
-                            <div class="zone-result">
-                                <div class="zone-name">México</div>
-                                <div class="zone-time" id="all-mexico-time">--:--:--</div>
-                                <div class="zone-date" id="all-mexico-date">-- -- ----</div>
-                            </div>
-                            <div class="zone-result">
-                                <div class="zone-name">Nueva York</div>
-                                <div class="zone-time" id="all-ny-time">--:--:--</div>
-                                <div class="zone-date" id="all-ny-date">-- -- ----</div>
-                            </div>
-                            <div class="zone-result">
-                                <div class="zone-name">GMT</div>
-                                <div class="zone-time" id="all-gmt-time">--:--:--</div>
-                                <div class="zone-date" id="all-gmt-date">-- -- ----</div>
-                            </div>
+                    <div class="clock-display">
+                        <div class="slider-group">
+                            <label>Hora</label>
+                            <input type="range" class="time-slider hour-slider" min="0" max="23" value="12">
                         </div>
+                        
+                        <div class="time-display">
+                            <span class="hours">00</span>
+                            <span class="separator">:</span>
+                            <span class="minutes">00</span>
+                        </div>
+                        
+                        <div class="slider-group">
+                            <label>Minutos</label>
+                            <input type="range" class="time-slider minute-slider" min="0" max="59" value="0">
+                        </div>
+                        
+                        <div class="date-display">--</div>
+                    </div>
+                </div>
+
+                <!-- Reloj GMT -->
+                <div class="clock-card" data-timezone="Europe/London">
+                    <div class="clock-header">
+                        <span class="clock-flag">🇬🇧</span>
+                        <div class="clock-info">
+                            <h3>GMT</h3>
+                            <span class="timezone-label">UTC+0</span>
+                        </div>
+                    </div>
+                    
+                    <div class="clock-display">
+                        <div class="slider-group">
+                            <label>Hora</label>
+                            <input type="range" class="time-slider hour-slider" min="0" max="23" value="12">
+                        </div>
+                        
+                        <div class="time-display">
+                            <span class="hours">00</span>
+                            <span class="separator">:</span>
+                            <span class="minutes">00</span>
+                        </div>
+                        
+                        <div class="slider-group">
+                            <label>Minutos</label>
+                            <input type="range" class="time-slider minute-slider" min="0" max="59" value="0">
+                        </div>
+                        
+                        <div class="date-display">--</div>
                     </div>
                 </div>
             </div>
-        </div>
+
+            <button class="btn-reset" id="btn-reset">
+                🔄 Sincronizar con hora actual
+            </button>
+        </section>
     </div>
+
     <script src="script.js"></script>
 </body>
 </html>
