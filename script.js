@@ -226,23 +226,37 @@ document.addEventListener('DOMContentLoaded', () => {
         const dateInput = document.getElementById('converter-date').value;
         const fromZone = document.getElementById('from-zone').value;
         
-        let targetDate;
+        let baseDate;
         
         if (dateInput) {
-            // Si hay una fecha ingresada, interpretarla como si fuera en la zona de origen
-            const localDate = new Date(dateInput);
-            // Crear una fecha que represente ese momento en la zona de origen
-            const dateString = localDate.toISOString().slice(0, 16);
-            targetDate = new Date(dateString);
+            // Si hay fecha ingresada, interpretarla como si fuera en la zona de origen
+            const inputDate = new Date(dateInput);
+            // Obtener los componentes de la fecha en la zona de origen
+            const fromFormatter = new Intl.DateTimeFormat('en-US', {
+                timeZone: fromZone,
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            });
+            
+            // Crear una fecha que represente ese momento específico
+            const localTime = inputDate.getTime();
+            const fromTime = new Date(localTime);
+            
+            baseDate = fromTime;
         } else {
             // Si no hay fecha, usar la hora actual
-            targetDate = new Date();
+            baseDate = new Date();
         }
         
         const zones = [
-            { id: 'all-mexico', zone: 'America/Mexico_City', name: 'México' },
-            { id: 'all-ny', zone: 'America/New_York', name: 'Nueva York' },
-            { id: 'all-gmt', zone: 'Europe/London', name: 'GMT' }
+            { id: 'all-mexico', zone: 'America/Mexico_City' },
+            { id: 'all-ny', zone: 'America/New_York' },
+            { id: 'all-gmt', zone: 'Europe/London' }
         ];
         
         zones.forEach(({ id, zone }) => {
@@ -258,49 +272,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 weekday: 'long'
             });
             
-            // Si hay una fecha ingresada, necesitamos convertirla correctamente
-            let dateToFormat = targetDate;
-            if (dateInput) {
-                // Convertir la fecha de la zona de origen a la zona destino
-                const fromFormatter = new Intl.DateTimeFormat('en-US', {
-                    timeZone: fromZone,
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit',
-                    hour12: false
-                });
-                
-                const fromParts = fromFormatter.formatToParts(targetDate);
-                const fromTime = {
-                    year: fromParts.find(p => p.type === 'year').value,
-                    month: fromParts.find(p => p.type === 'month').value,
-                    day: fromParts.find(p => p.type === 'day').value,
-                    hour: fromParts.find(p => p.type === 'hour').value,
-                    minute: fromParts.find(p => p.type === 'minute').value,
-                    second: fromParts.find(p => p.type === 'second').value
-                };
-                
-                // Crear fecha UTC equivalente
-                const utcDate = new Date(Date.UTC(
-                    parseInt(fromTime.year),
-                    parseInt(fromTime.month) - 1,
-                    parseInt(fromTime.day),
-                    parseInt(fromTime.hour),
-                    parseInt(fromTime.minute),
-                    parseInt(fromTime.second)
-                ));
-                
-                // Ajustar por la diferencia de zona horaria
-                const fromOffset = new Date().toLocaleString('en-US', { timeZone: fromZone, timeZoneName: 'longOffset' });
-                const toOffset = new Date().toLocaleString('en-US', { timeZone: zone, timeZoneName: 'longOffset' });
-                
-                dateToFormat = utcDate;
-            }
-            
-            const parts = formatter.formatToParts(dateToFormat);
+            const parts = formatter.formatToParts(baseDate);
             const timeObj = {};
             parts.forEach(part => {
                 timeObj[part.type] = part.value;
