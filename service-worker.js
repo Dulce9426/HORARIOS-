@@ -1,4 +1,4 @@
-const CACHE_NAME = 'reloj-mundial-v1';
+const CACHE_NAME = 'reloj-mundial-v2';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -24,50 +24,48 @@ self.addEventListener('activate', (event) => {
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames.map((cacheName) => {
-          if (cacheName !== CACHE_NAME) {
-            console.log('Eliminando cache antiguo:', cacheName);
-            return caches.delete(cacheName);
-          }
+          console.log('Eliminando cache:', cacheName);
+          return caches.delete(cacheName);
         })
       );
+    }).then(() => {
+      return self.clients.claim();
     })
   );
 });
 
-// Interceptar peticiones
+// Interceptar peticiones - siempre usar la red primero
 self.addEventListener('fetch', (event) => {
   event.respondWith(
-    caches.match(event.request)
+    fetch(event.request)
       .then((response) => {
-        // Cache hit - devolver respuesta
-        if (response) {
+        // Verificar si la respuesta es válida
+        if (!response || response.status !== 200 || response.type !== 'basic') {
           return response;
         }
         
-        // Clonar la petición
-        const fetchRequest = event.request.clone();
+        // Clonar la respuesta para cachear
+        const responseToCache = response.clone();
         
-        return fetch(fetchRequest).then((response) => {
-          // Verificar si la respuesta es válida
-          if (!response || response.status !== 200 || response.type !== 'basic') {
-            return response;
-          }
-          
-          // Clonar la respuesta
-          const responseToCache = response.clone();
-          
-          caches.open(CACHE_NAME)
-            .then((cache) => {
-              cache.put(event.request, responseToCache);
-            });
-          
-          return response;
-        }).catch(() => {
-          // Si falla la red y no hay cache, devolver página offline
-          if (event.request.destination === 'document') {
-            return caches.match('/index.html');
-          }
-        });
+        caches.open(CACHE_NAME)
+          .then((cache) => {
+            cache.put(event.request, responseToCache);
+          });
+        
+        return response;
+      })
+      .catch(() => {
+        // Si falla la red, intentar usar cache
+        return caches.match(event.request)
+          .then((cachedResponse) => {
+            if (cachedResponse) {
+              return cachedResponse;
+            }
+            // Si no hay cache y es una página, devolver index.html
+            if (event.request.destination === 'document') {
+              return caches.match('/index.html');
+            }
+          });
       })
   );
 });
